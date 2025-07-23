@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Venge Hardware - Gaming & Tech Store</title>
+    <link rel="stylesheet" href="front/css/styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">
+                <i class="fas fa-microchip"></i>
+                <h1>Venge Hardware</h1>
+            </div>
+            <nav class="nav-menu">
+                <ul>
+                    <li><a href="#" onclick="showSection('home')" class="nav-link active">Inicio</a></li>
+                    <li><a href="#" onclick="showSection('productos')" class="nav-link">Productos</a></li>
+                    <li><a href="#" onclick="showSection('categorias')" class="nav-link">Categorías</a></li>
+                    <li><a href="#" onclick="showSection('carrito')" class="nav-link">Carrito <span id="cart-count">0</span></a></li>
+                    <li><a href="#" onclick="showSection('pedidos')" class="nav-link">Mis Pedidos</a></li>
+                </ul>
+            </nav>
+            <div class="auth-links">
+                <!-- Enlace de login/logout, el JS debe mostrar 'Iniciar Sesión' si no está logueado, 'Cerrar Sesión' si sí -->
+                <a href="#" id="login-link" onclick="showLoginModal()">Iniciar Sesión</a>
+                <a href="#" id="logout-link" style="display:none;" onclick="logout()">Cerrar Sesión</a>
+            </div>
+            <div class="mobile-menu-toggle">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Home Section -->
+        <section id="home" class="section active">
+            <!-- Hero Section -->
+            <div class="hero-section">
+                <div class="hero-content">
+                    <h2>Hardware Gaming de Alto Rendimiento</h2>
+                    <p>Descubre la mejor selección de componentes para tu setup gaming</p>
+                    <button class="btn-primary" onclick="showSection('productos')">
+                        Ver Productos
+                    </button>
+                </div>
+            </div>
+
+            <!-- Featured Products -->
+            <div class="featured-section">
+                <div class="section-header">
+                    <h3>Productos Destacados</h3>
+                    <button class="btn-text" onclick="showSection('productos')">
+                        Ver todos <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+                <div id="featured-products" class="products-grid">
+                    <!-- Featured products will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Categories Preview -->
+            <div class="categories-preview">
+                <h3>Categorías</h3>
+                <div class="categories-grid">
+                    <div class="category-card" onclick="filterByCategory('GPU')">
+                        <i class="fas fa-microchip"></i>
+                        <h4>GPU</h4>
+                    </div>
+                    <div class="category-card" onclick="filterByCategory('CPU')">
+                        <i class="fas fa-microchip"></i>
+                        <h4>CPU</h4>
+                    </div>
+                    <div class="category-card" onclick="filterByCategory('RAM')">
+                        <i class="fas fa-memory"></i>
+                        <h4>RAM</h4>
+                    </div>
+                    <div class="category-card" onclick="filterByCategory('Storage')">
+                        <i class="fas fa-hdd"></i>
+                        <h4>Almacenamiento</h4>
+                    </div>
+                    <div class="category-card" onclick="filterByCategory('PSU')">
+                        <i class="fas fa-bolt"></i>
+                        <h4>Fuentes</h4>
+                    </div>
+                    <div class="category-card" onclick="filterByCategory('Peripherals')">
+                        <i class="fas fa-keyboard"></i>
+                        <h4>Periféricos</h4>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Productos Section -->
+        <section id="productos" class="section">
+            <div class="products-header">
+                <div class="products-title">
+                    <h2>Productos</h2>
+                    <p id="products-count">Cargando productos...</p>
+                </div>
+                <div class="products-controls">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="product-search" placeholder="Buscar productos...">
+                    </div>
+                    <select id="category-filter" onchange="filterProducts()">
+                        <option value="">Todas las categorías</option>
+                        <option value="GPU">GPU</option>
+                        <option value="CPU">CPU</option>
+                        <option value="RAM">RAM</option>
+                        <option value="Motherboard">Motherboard</option>
+                        <option value="Storage">Almacenamiento</option>
+                        <option value="PSU">Fuente de Poder</option>
+                        <option value="Case">Gabinete</option>
+                        <option value="Cooling">Refrigeración</option>
+                        <option value="Peripherals">Periféricos</option>
+                    </select>
+                    <select id="sort-filter" onchange="sortProducts()">
+                        <option value="name">Ordenar por nombre</option>
+                        <option value="price-low">Precio: menor a mayor</option>
+                        <option value="price-high">Precio: mayor a menor</option>
+                        <option value="stock">Stock disponible</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="products-list" class="products-grid">
+                <!-- Products will be loaded here -->
+            </div>
+        </section>
+
+        <!-- Categorías Section -->
+        <section id="categorias" class="section">
+            <div class="section-header">
+                <h2>Categorías</h2>
+            </div>
+            
+            <div id="categories-list" class="categories-grid">
+                <!-- Categories will be loaded here -->
+            </div>
+        </section>
+
+        <!-- Carrito Section -->
+        <section id="carrito" class="section">
+            <div class="cart-header">
+                <h2>Carrito de Compras</h2>
+                <button class="btn-primary" onclick="realizarPedido()" id="checkout-btn" disabled>
+                    <i class="fas fa-shopping-bag"></i> Realizar Pedido
+                </button>
+            </div>
+            
+            <div id="cart-items" class="cart-container">
+                <div class="empty-cart" id="empty-cart">
+                    <i class="fas fa-shopping-cart"></i>
+                    <h3>Tu carrito está vacío</h3>
+                    <p>Agrega algunos productos para comenzar</p>
+                    <button class="btn-primary" onclick="showSection('productos')">Ver Productos</button>
+                </div>
+                <div id="cart-items-list" style="display: none;">
+                    <!-- Cart items will be loaded here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Pedidos Section -->
+        <section id="pedidos" class="section">
+            <div class="section-header">
+                <h2>Realizar Pedido</h2>
+            </div>
+            
+            <div class="order-form-container">
+                <form id="order-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="order-name">Nombre Completo</label>
+                            <input type="text" id="order-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="order-email">Email</label>
+                            <input type="email" id="order-email" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="order-phone">Teléfono</label>
+                        <input type="tel" id="order-phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="order-address">Dirección de Envío</label>
+                        <textarea id="order-address" required></textarea>
+                    </div>
+                    <div class="order-summary">
+                        <h3>Resumen del Pedido</h3>
+                        <div id="order-items-summary">
+                            <!-- Order items will be shown here -->
+                        </div>
+                        <div class="order-total">
+                            <strong>Total: $<span id="order-total">0.00</span></strong>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">Confirmar Pedido</button>
+                        <button type="button" class="btn-secondary" onclick="showSection('carrito')">Volver al Carrito</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- Historial Section -->
+        <section id="historial" class="section">
+            <div class="section-header">
+                <h2>Mis Pedidos</h2>
+                <button class="btn-secondary" onclick="loadOrderHistory()">
+                    <i class="fas fa-refresh"></i> Actualizar
+                </button>
+            </div>
+            
+            <div id="order-history" class="order-history-container">
+                <!-- Order history will be loaded here -->
+            </div>
+        </section>
+
+        <!-- ADMIN: CRUD Productos (solo visible para admin) -->
+        <section id="admin-productos" class="section" style="display:none;">
+            <div class="section-header">
+                <h2>Administrar Productos</h2>
+            </div>
+            <div class="admin-products-container">
+                <!-- Formulario para crear/editar productos -->
+                <form id="product-crud-form">
+                    <input type="hidden" id="crud-product-id">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="crud-product-name">Nombre</label>
+                            <input type="text" id="crud-product-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="crud-product-category">Categoría</label>
+                            <input type="text" id="crud-product-category" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="crud-product-price">Precio</label>
+                            <input type="number" id="crud-product-price" required min="0" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label for="crud-product-stock">Stock</label>
+                            <input type="number" id="crud-product-stock" required min="0">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="crud-product-description">Descripción</label>
+                        <textarea id="crud-product-description" required></textarea>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">Guardar Producto</button>
+                        <button type="button" class="btn-secondary" onclick="resetCrudForm()">Limpiar</button>
+                    </div>
+                </form>
+                <!-- Tabla de productos -->
+                <div class="admin-products-list">
+                    <h3>Lista de Productos</h3>
+                    <table id="crud-products-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Categoría</th>
+                                <th>Precio</th>
+                                <th>Stock</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- JS: productos se cargan aquí -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Modal de Login -->
+        <div id="login-modal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeLoginModal()">&times;</span>
+                <h2>Iniciar Sesión</h2>
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="login-username">Usuario o Email</label>
+                        <input type="text" id="login-username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Contraseña</label>
+                        <input type="password" id="login-password" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">Entrar</button>
+                    </div>
+                </form>
+                <div id="login-error" class="notification" style="display:none;"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Product Modal -->
+    <div id="product-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="modal-product-details">
+                <!-- Product details will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification"></div>
+
+    <script src="front/js/script.js"></script>
+</body>
+</html> 
